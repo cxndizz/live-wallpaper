@@ -1,5 +1,4 @@
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Threading;
 using LiveWallpaperStudio.Data.Library;
 using LiveWallpaperStudio.Data.Models;
@@ -45,9 +44,11 @@ public sealed class WallpaperWindowController
             }
 
             var oldSessions = ReplaceSessions(newSessions);
+            ReflowSessions(newSessions, host);
             CurrentFilePath = filePath;
             CurrentScaleMode = scaleMode;
             State = PlaybackState.Playing;
+            SchedulePostApplyReflow();
             _ = CloseSessionsAsync(oldSessions);
         }
         catch
@@ -83,6 +84,7 @@ public sealed class WallpaperWindowController
             }
 
             var oldSessions = ReplaceSessions(newSessions);
+            ReflowSessions(newSessions, host);
             CurrentFilePath = assignments.Count switch
             {
                 0 => null,
@@ -91,6 +93,7 @@ public sealed class WallpaperWindowController
             };
             CurrentScaleMode = assignments.Count == 1 ? assignments.Values.First().ScaleMode : ScaleMode.Cover;
             State = _sessions.Count > 0 ? PlaybackState.Playing : PlaybackState.Stopped;
+            SchedulePostApplyReflow();
             _ = CloseSessionsAsync(oldSessions);
         }
         catch
@@ -182,6 +185,23 @@ public sealed class WallpaperWindowController
         return oldSessions;
     }
 
+    private void SchedulePostApplyReflow()
+    {
+        _ = System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            ReattachToDesktopAndReflow();
+            _ = ReattachAfterDelayAsync(180);
+            _ = ReattachAfterDelayAsync(650);
+            _ = ReattachAfterDelayAsync(1400);
+        }, DispatcherPriority.ApplicationIdle);
+    }
+
+    private async Task ReattachAfterDelayAsync(int delayMs)
+    {
+        await Task.Delay(delayMs);
+        await System.Windows.Application.Current.Dispatcher.InvokeAsync(ReattachToDesktopAndReflow, DispatcherPriority.Background);
+    }
+
     private static async Task CloseSessionsAsync(IReadOnlyList<RendererSession> sessions)
     {
         foreach (var session in sessions)
@@ -199,6 +219,11 @@ public sealed class WallpaperWindowController
 
     public void Reattach()
     {
+        ReattachToDesktopAndReflow();
+    }
+
+    private void ReattachToDesktopAndReflow()
+    {
         foreach (var session in _sessions)
         {
             session.Attachment = _desktopHost.AttachRendererWindow(session.Window.Handle);
@@ -209,13 +234,23 @@ public sealed class WallpaperWindowController
 
     public void ReflowToCurrentMonitors()
     {
+        ReflowSessions(_sessions, null);
+    }
+
+    private void ReflowSessions(IReadOnlyList<RendererSession> sessions, IntPtr? host)
+    {
         var monitors = _monitorManager.GetMonitors();
-        foreach (var session in _sessions)
+        foreach (var session in sessions)
         {
             var monitor = monitors.FirstOrDefault(item => item.DeviceName == session.MonitorDeviceName);
             if (monitor is null)
             {
                 continue;
+            }
+
+            if (host is { } desktopHost)
+            {
+                session.Attachment = _desktopHost.AttachRendererWindow(session.Window.Handle, desktopHost);
             }
 
             ApplyMonitorBounds(session.Window, monitor);
@@ -298,17 +333,13 @@ public sealed class WallpaperWindowController
 
     private static void ApplyMonitorBounds(WallpaperRendererWindow window, MonitorInfo monitor)
     {
-        var source = PresentationSource.FromVisual(window);
-        var transform = source?.CompositionTarget?.TransformFromDevice ?? System.Windows.Media.Matrix.Identity;
-        var origin = transform.Transform(new System.Windows.Point(monitor.X, monitor.Y));
-        var size = transform.Transform(new System.Windows.Vector(monitor.Width, monitor.Height));
-
-        window.Left = origin.X;
-        window.Top = origin.Y;
-        window.Width = Math.Max(1, size.X);
-        window.Height = Math.Max(1, size.Y);
-        window.SetRenderTargetSize(monitor.Width, monitor.Height);
+        // Use Win32 SetWindowPos as the sole positioning authority.
+        // After SetParent to the desktop host, WPF's TransformFromDevice uses a single DPI
+        // value (from the host / primary monitor), which produces wrong sizes when monitors
+        // have different DPIs or resolutions.  Win32 pixel coordinates are always correct.
+        // WPF receives WM_SIZE from SetWindowPos and updates its layout automatically.
         DesktopHostService.SetRendererBounds(window.Handle, monitor.X, monitor.Y, monitor.Width, monitor.Height);
+        window.SetRenderTargetSize(monitor.Width, monitor.Height);
     }
 }
 
