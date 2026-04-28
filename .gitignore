@@ -1,0 +1,15 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+
+build/publish/
+build/setup/
+
+TestResults/
+*.trx
+build/wpf-installer/payload
+build/wpf-installer/Wallora.Setup.exe
+build/

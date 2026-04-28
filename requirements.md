@@ -10,8 +10,8 @@ Web Wallpaper     : WebView2
 Database          : SQLite
 Config            : JSON
 Build             : dotnet publish
-Installer         : Inno Setup
-Custom Installer  : WPF Setup UI, ทำทีหลังได้
+Installer         : WPF Setup UI
+Custom Installer  : LiveWallpaperStudio.Installer
 ```
 
 ---
@@ -460,7 +460,7 @@ MVP ต้องมี 5 หน้า:
 แนะนำใช้:
 
 ```text
-Inno Setup
+WPF Setup UI
 ```
 
 เหมาะกับการทำ `Setup.exe`, copy files, สร้าง shortcut, เขียน uninstall entry และสร้าง uninstaller จริงบน Windows
@@ -489,7 +489,7 @@ Finish
 | INS-06 | Launch app after install checkbox | P1 |
 | INS-07 | Custom dark UI แบบ mockup | P2 |
 
-MVP ใช้ Inno Setup UI ปกติก่อนได้  
+MVP ใช้ WPF Setup UI เป็น installer หลัก
 Custom installer UI แบบในรูปค่อยทำภายหลังด้วย WPF
 
 ---
@@ -845,7 +845,7 @@ LiveWallpaperStudio/
 │     └─ ทำทีหลังสำหรับ custom installer
 │
 ├─ installer/
-│  └─ LiveWallpaperStudio.iss
+│  └─ LiveWallpaperStudio.Installer/
 │
 ├─ assets/
 │  ├─ icons/
@@ -900,7 +900,7 @@ Tray:
 - Exit
 
 Installer:
-- Inno Setup แบบพื้นฐาน
+- WPF Setup UI
 - Desktop shortcut
 - Start with Windows
 - Uninstall
@@ -967,7 +967,7 @@ Installer:
 - Tray icon
 - Pause rules
 - Settings
-- Inno Setup installer
+- WPF installer
 ```
 
 ### Phase 3 — Stable Release
@@ -1009,7 +1009,7 @@ Stack:
 - Win32 API interop
 - SQLite
 - JSON config
-- Inno Setup
+- WPF installer
 
 Core Features:
 - Home dashboard

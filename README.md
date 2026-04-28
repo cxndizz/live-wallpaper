@@ -1,6 +1,6 @@
-# Live Wallpaper Studio — Documentation Package
+# Wallora - Live wallpaper — Documentation Package
 
-ชุดเอกสารนี้รวบรวมการวิเคราะห์และออกแบบโปรแกรม **Live Wallpaper Studio** จากบทสนทนา โดยแยกเป็นไฟล์ Markdown หลายส่วน พร้อมรูป mockup ที่ออกแบบไว้ 2 รูปในโฟลเดอร์ `img/`
+ชุดเอกสารนี้รวบรวมการวิเคราะห์และออกแบบโปรแกรม **Wallora - Live wallpaper** จากบทสนทนา โดยแยกเป็นไฟล์ Markdown หลายส่วน พร้อมรูป mockup ที่ออกแบบไว้ 2 รูปในโฟลเดอร์ `img/`
 
 ## โครงสร้างไฟล์
 
@@ -44,8 +44,8 @@ Web Wallpaper     : WebView2
 Database          : SQLite
 Config            : JSON
 Build             : dotnet publish
-Installer         : Inno Setup
-Custom Installer  : WPF Setup UI, ทำทีหลังได้
+Installer         : WPF Setup UI
+Custom Installer  : LiveWallpaperStudio.Installer
 ```
 
 ## แนวคิดหลัก

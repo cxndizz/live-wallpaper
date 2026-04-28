@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Wallora.Setup</AssemblyName>
+    <ApplicationIcon>Assets\Brand\app-icon.ico</ApplicationIcon>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <AssemblyTitle>Wallora - Live wallpaper Setup</AssemblyTitle>
+    <Product>Wallora - Live wallpaper</Product>
+    <Description>Wallora installer and uninstaller.</Description>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Brand\app-icon.ico" />
+    <Resource Include="Assets\Brand\app-icon.png" />
+    <Resource Include="Assets\Brand\app-icon-256.png" />
+    <Resource Include="Assets\Brand\app-mark.png" />
+    <Resource Include="Assets\Brand\primary-horizontal-logo.png" />
+  </ItemGroup>
+
+</Project>

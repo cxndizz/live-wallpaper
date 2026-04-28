@@ -62,7 +62,7 @@ Acceptance:
 - Logs
 - Diagnostics
 - Auto-start
-- Inno Setup installer
+- WPF installer
 - Uninstall options
 ```
 

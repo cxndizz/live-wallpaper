@@ -7,7 +7,7 @@
 ```text
 Main App UI       : C# + .NET + WPF
 Wallpaper Engine  : C# + Win32 API
-Installer         : Inno Setup
+Installer         : WPF Setup UI
 ```
 
 การ build ปกติควรเป็น:
@@ -19,7 +19,7 @@ dotnet publish
 ↓
 ได้ output folder
 ↓
-ใช้ Inno Setup แพ็กเป็น Setup.exe
+ใช้ WPF installer แพ็กเป็น Setup.exe
 ↓
 ผู้ใช้ติดตั้งโปรแกรม
 ```
@@ -43,7 +43,7 @@ dotnet publish
 
 ```text
 publish เป็น folder
-→ ใช้ Inno Setup ทำ Setup.exe
+→ ใช้ WPF installer ทำ Setup.exe
 ```
 
 มากกว่า build เป็น single-file อย่างเดียว

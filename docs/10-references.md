@@ -42,7 +42,7 @@
 
 ## Installer
 
-- Inno Setup Help  
+- WPF installer implementation notes  
   https://jrsoftware.org/ishelp/
 
 - NSIS Documentation  

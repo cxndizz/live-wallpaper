@@ -10,12 +10,12 @@
 
 ```text
 Version แรก:
-- ใช้ Inno Setup แบบพื้นฐาน
+- ใช้ WPF Setup UI
 - ได้ Setup.exe และ Uninstaller เร็ว
 
 Version สวยเหมือน mockup:
 - ใช้ WPF Custom Setup UI
-- ด้านในอาจเรียก Inno Setup หรือ installer core
+- ด้านในใช้ installer core ของ WPF installer
 ```
 
 ## Installer Flow
@@ -119,7 +119,7 @@ Delete cache: default yes
 ## Installer Tool ที่แนะนำ
 
 ```text
-Inno Setup
+WPF Setup UI
 ```
 
 เหมาะกับ:
@@ -144,7 +144,7 @@ WPF Custom Setup Launcher
 ↓
 แสดง UI สวย ๆ
 ↓
-เรียก installer core / Inno Setup แบบ silent
+เรียก installer core ของ WPF installer
 ↓
 แสดง progress
 ↓

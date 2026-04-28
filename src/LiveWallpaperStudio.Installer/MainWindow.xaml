@@ -1,0 +1,287 @@
+<Window x:Class="LiveWallpaperStudio.Installer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Wallora - Live wallpaper Setup"
+        Icon="Assets/Brand/app-icon.ico"
+        Width="960"
+        Height="600"
+        MinWidth="900"
+        MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+    <Window.Resources>
+        <Color x:Key="Text">#F7FAFF</Color>
+        <Color x:Key="Muted">#BAC5D4</Color>
+        <SolidColorBrush x:Key="TextBrush" Color="{StaticResource Text}" />
+        <SolidColorBrush x:Key="MutedBrush" Color="{StaticResource Muted}" />
+        <SolidColorBrush x:Key="StrokeBrush" Color="#2A3B53" />
+        <FontFamily x:Key="FluentIconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+        <LinearGradientBrush x:Key="AccentBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#2387FF" Offset="0" />
+            <GradientStop Color="#7D45FF" Offset="0.55" />
+            <GradientStop Color="#B935FF" Offset="1" />
+        </LinearGradientBrush>
+
+        <Style x:Key="ChromeButton" TargetType="Button">
+            <Setter Property="Width" Value="44" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#182638" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#22344C" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CloseChromeButton" TargetType="Button" BasedOn="{StaticResource ChromeButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#D73A49" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#B92F3E" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Height" Value="46" />
+            <Setter Property="MinWidth" Value="132" />
+            <Setter Property="Padding" Value="22,0" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="BorderBrush" Value="{StaticResource StrokeBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="#111D2B" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#18283B" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.42" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+        </Style>
+
+        <Style x:Key="MockCheckBox" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Margin" Value="0,10,0,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Border x:Name="Box" Width="24" Height="24" CornerRadius="8" BorderBrush="#3B4D66" BorderThickness="1" Background="#101A29">
+                                <Viewbox Margin="5">
+                                    <Path x:Name="Tick"
+                                          Data="M 2 7 L 6 11 L 14 2"
+                                          Stroke="White"
+                                          StrokeThickness="2.6"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Visibility="Collapsed" />
+                                </Viewbox>
+                            </Border>
+                            <ContentPresenter Margin="12,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Box" Property="Background" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Box" Property="BorderThickness" Value="0" />
+                                <Setter TargetName="Tick" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="18" BorderBrush="#22344C" BorderThickness="1" Background="#07111E">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="28" ShadowDepth="4" Opacity="0.45" />
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="68" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Background="#07111E" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="34,0,0,0">
+                    <Image Source="Assets/Brand/app-mark.png"
+                           Width="44"
+                           Height="30"
+                           Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           Margin="0,0,18,0" />
+                    <TextBlock x:Name="WindowTitleText" Text="Wallora - Live wallpaper Setup" Foreground="{StaticResource TextBrush}" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,10,12,0">
+                    <Button Style="{StaticResource ChromeButton}" ToolTip="Minimize" Click="Minimize_Click">
+                        <TextBlock Text="&#xE921;" FontFamily="{StaticResource FluentIconFont}" FontSize="12" Foreground="{StaticResource TextBrush}" />
+                    </Button>
+                    <Button Style="{StaticResource ChromeButton}" ToolTip="Maximize" IsEnabled="False">
+                        <TextBlock Text="&#xE922;" FontFamily="{StaticResource FluentIconFont}" FontSize="12" Foreground="{StaticResource TextBrush}" />
+                    </Button>
+                    <Button Style="{StaticResource CloseChromeButton}" ToolTip="Close" Click="Close_Click">
+                        <TextBlock Text="&#xE8BB;" FontFamily="{StaticResource FluentIconFont}" FontSize="12" Foreground="{StaticResource TextBrush}" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Background="#07111E">
+                <Grid x:Name="InstallOptionsView" Margin="88,24,88,28">
+                    <Grid Width="720" HorizontalAlignment="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel>
+                        <Image Source="Assets/Brand/primary-horizontal-logo.png"
+                               Width="238"
+                               Height="45"
+                               HorizontalAlignment="Left"
+                               Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               Margin="0,0,0,18" />
+                        <TextBlock Text="Welcome to Wallora" FontSize="30" FontWeight="Bold" Foreground="{StaticResource TextBrush}" />
+                        <TextBlock Text="This wizard will guide you through the installation." FontSize="15" Foreground="{StaticResource MutedBrush}" Margin="0,14,0,0" />
+                        </StackPanel>
+                        <Border Grid.Row="1" Margin="0,22,0,18" Padding="18" CornerRadius="16" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" Background="#B00E1927" VerticalAlignment="Top">
+                            <StackPanel>
+                                <TextBlock Text="Install location" Foreground="{StaticResource TextBrush}" FontSize="14" />
+                                <Grid Margin="0,10,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="132" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Height="42" CornerRadius="12" BorderBrush="#2B3E58" BorderThickness="1" Background="#0B1421">
+                                        <TextBox x:Name="InstallPathTextBox" Margin="12,0" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}" FontSize="14" CaretBrush="White" />
+                                    </Border>
+                                    <Button Grid.Column="1" Style="{StaticResource ActionButton}" Height="42" MinWidth="124" Margin="8,0,0,0" Content="Browse..." Click="Browse_Click" />
+                                </Grid>
+                                <CheckBox x:Name="DesktopShortcutCheckBox" Style="{StaticResource MockCheckBox}" Content="Create a desktop shortcut" IsChecked="True" />
+                                <CheckBox x:Name="StartupCheckBox" Style="{StaticResource MockCheckBox}" Content="Start Wallora with Windows" IsChecked="True" />
+                            </StackPanel>
+                        </Border>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource ActionButton}" Content="Back" IsEnabled="False" />
+                            <Button Style="{StaticResource PrimaryButton}" Content="Next" Margin="14,0,0,0" Click="Install_Click" />
+                            <Button Style="{StaticResource ActionButton}" Content="Cancel" Margin="14,0,0,0" Click="Close_Click" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <Grid x:Name="InstallingView" Visibility="Collapsed" Margin="72,46,72,58">
+                    <StackPanel Width="700" HorizontalAlignment="Center">
+                        <TextBlock Text="Installing Wallora" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextBrush}" />
+                        <TextBlock Text="Please wait while the wizard installs Wallora - Live wallpaper." FontSize="15" Foreground="{StaticResource MutedBrush}" Margin="0,14,0,0" />
+                        <TextBlock x:Name="InstallStatusText" Text="Copying files..." FontSize="15" Foreground="{StaticResource TextBrush}" Margin="0,42,0,0" />
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="620" />
+                                <ColumnDefinition Width="24" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Height="16" CornerRadius="8" BorderBrush="#31455F" BorderThickness="1" Background="#0B1421" />
+                            <Border x:Name="ProgressFill" Grid.Column="0" Height="16" Width="1" HorizontalAlignment="Left" CornerRadius="8" Background="{StaticResource AccentBrush}" />
+                            <TextBlock x:Name="ProgressPercentText" Grid.Column="2" Text="0%" Foreground="{StaticResource TextBrush}" FontSize="16" Margin="0,-4,0,0" />
+                        </Grid>
+                        <ItemsControl x:Name="StepList" Margin="0,36,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                        <Ellipse Width="18" Height="18" Fill="{Binding Brush}" Stroke="#3C506B" StrokeThickness="1" />
+                                        <TextBlock Text="{Binding Label}" Foreground="{StaticResource TextBrush}" FontSize="15" Margin="18,0,0,0" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                        <Button Style="{StaticResource ActionButton}" Content="Back" IsEnabled="False" />
+                        <Button Style="{StaticResource ActionButton}" Content="Next" Margin="14,0,0,0" IsEnabled="False" />
+                        <Button Style="{StaticResource ActionButton}" Content="Cancel" Margin="14,0,0,0" Click="Close_Click" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid x:Name="UninstallView" Visibility="Collapsed" Margin="72,46,72,58">
+                    <StackPanel Width="680" HorizontalAlignment="Center">
+                        <TextBlock Text="Remove Wallora" FontSize="31" FontWeight="Bold" Foreground="{StaticResource TextBrush}" LineHeight="36" />
+                        <TextBlock Text="This will remove Wallora - Live wallpaper from your computer." FontSize="15" Foreground="{StaticResource MutedBrush}" Margin="0,20,0,0" />
+                        <Border Margin="0,26,0,0" Padding="20" CornerRadius="16" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" Background="#B00E1927">
+                            <TextBlock Text="Info: The application will be uninstalled and its components will be removed." Foreground="{StaticResource MutedBrush}" FontSize="15" TextWrapping="Wrap" />
+                        </Border>
+                        <CheckBox x:Name="RemoveLibraryCheckBox" Style="{StaticResource MockCheckBox}" Content="Remove wallpaper library" Margin="0,26,0,0" />
+                        <CheckBox x:Name="DeleteSettingsCheckBox" Style="{StaticResource MockCheckBox}" Content="Delete settings and cache" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,44,0,0">
+                            <Button Style="{StaticResource PrimaryButton}" Content="Uninstall" Click="Uninstall_Click" />
+                            <Button Style="{StaticResource ActionButton}" Content="Cancel" Margin="14,0,0,0" Click="Close_Click" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+                <Grid x:Name="RemovedView" Visibility="Collapsed" Margin="72,46,72,58">
+                    <StackPanel Width="680" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Wallora&#x0a;has been removed" FontSize="30" FontWeight="Bold" Foreground="{StaticResource TextBrush}" LineHeight="36" />
+                        <TextBlock Text="Wallora - Live wallpaper has been successfully uninstalled from your computer." FontSize="16" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,28,20,0" />
+                        <Border Margin="0,28,20,0" Padding="20" CornerRadius="16" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" Background="#B00E1927">
+                            <TextBlock x:Name="RemovedNoteText" Text="OK: Your wallpapers and settings were kept." Foreground="{StaticResource MutedBrush}" FontSize="15" />
+                        </Border>
+                        <Button Style="{StaticResource PrimaryButton}" Content="Finish" HorizontalAlignment="Right" Margin="0,70,20,0" Click="Close_Click" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

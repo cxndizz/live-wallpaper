@@ -1,0 +1,167 @@
+# Implementation Status
+
+## Completed in Code
+
+- Created .NET solution with separate App, Engine, Renderers, Data, and Tests projects.
+- Added WPF main shell matching the visual direction of the mockups:
+  - custom dark window
+  - sidebar navigation
+  - Home, Library, Displays, Performance, and Settings pages
+  - tray icon with Open, Pause, and Exit actions
+- Wired the first wallpaper prototype path:
+  - Add Wallpaper opens a file picker
+  - selected wallpaper is applied to all detected monitors
+  - renderer windows are attached to the desktop WorkerW layer
+  - image wallpapers render through WPF `Image`
+  - video wallpapers render through LibVLCSharp instead of WPF `MediaElement`
+  - Pause/Resume works from UI and tray
+  - Stop and Reattach actions are available in Settings
+- Added renderer abstractions:
+  - `IWallpaperRenderer`
+  - `ImageRenderer`
+  - `VideoRenderer` placeholder
+  - shared `WallpaperSource` and `RendererBounds`
+- Added data/config foundation:
+  - `AppSettings`
+  - `SettingsStore`
+  - `AppDataPaths`
+  - wallpaper and monitor models
+- Added persisted library/config behavior:
+  - `library.json` stores wallpaper items under `%AppData%\LiveWallpaperStudio`
+  - `config.json` stores the last applied wallpaper id
+  - Library loads saved wallpapers at startup
+  - Add Wallpaper de-duplicates file paths and persists the collection
+  - Last wallpaper restores automatically at startup when the source file still exists
+- Replaced static Library cards with dynamic cards built from saved wallpaper items.
+- Added first-pass Library management:
+  - Search filters by name, path, and type
+  - Image thumbnails are generated into `%AppData%\LiveWallpaperStudio\thumbnails`
+  - Library cards can Apply, open file location, or Remove
+  - Remove keeps the original wallpaper file intact
+  - Removing the active last wallpaper clears `LastWallpaperId` and stops the renderer
+- Added first-pass Displays page integration:
+  - Monitor cards are rendered from real Windows monitor data
+  - Resolution, aspect ratio, primary status, device name, and coordinates are shown
+  - Wallpaper mode is stored in `config.json`
+  - Same / different per monitor / span modes are selectable in the UI
+  - `MonitorProfiles` are synced from detected monitors and persisted for the next per-monitor pass
+- Added per-monitor wallpaper prototype:
+  - `WallpaperWindowController` can apply a different renderer session per monitor
+  - Displays profile rows include `Choose Wallpaper`
+  - Choosing a monitor wallpaper adds it to Library, stores the monitor profile, switches to `DifferentPerMonitor`, and applies profiles immediately
+  - Switching to `DifferentPerMonitor` reapplies saved monitor assignments
+  - Switching back to `SameOnAllMonitors` restores the last shared wallpaper
+- Added Library-to-monitor and scale mode UX:
+  - Library cards include a `Monitor` action with a monitor picker menu
+  - Applying from that menu updates the target `MonitorProfile`, switches to `DifferentPerMonitor`, and reapplies profiles
+  - Missing wallpaper files are visually marked in Library cards
+  - Settings includes persisted default scale mode cards for Cover, Contain, Stretch, and Center
+  - Home shows the active default scale mode
+- Added missing-file repair and per-monitor scale controls:
+  - Missing Library cards include a `Relink` action
+  - Relink updates file path, type, size, thumbnail, and persisted library data
+  - Displays profile rows include a `Scale` action
+  - Per-monitor scale mode is stored in `MonitorProfiles`
+  - Changing monitor scale reapplies profiles when `DifferentPerMonitor` is active
+- Added functional Performance and Settings controls:
+  - Performance presets are now persisted and update pause rules/FPS
+  - Target FPS buttons update config and monitor profile FPS values
+  - Pause rule checkboxes persist to `config.json`
+  - Home shows performance preset and FPS dynamically
+  - Start with Windows writes/removes the HKCU Run entry
+  - Minimize-to-tray and keep-running behavior are persisted
+  - Tray `Next Wallpaper` applies the next available Library item
+  - Tray `Mute/Unmute` now controls video wallpaper volume through the renderer window controller
+  - Settings can clear thumbnail cache, open the data folder, export diagnostics, and reset settings while keeping the Library
+- Added maintainability and thumbnail improvements:
+  - Monitor profile mutation logic moved into `MonitorProfileService`
+  - Added unit tests for monitor profile sync/update behavior
+  - Diagnostics export moved into `DiagnosticsExportService`
+  - Video wallpapers now try to extract a real thumbnail frame through `ffmpeg` when available
+  - Video thumbnails fall back to generated placeholders when `ffmpeg` is missing or extraction fails
+- Added Library workflow extraction:
+  - Search/filter, Next Wallpaper selection, relink metadata, remove side effects, and thumbnail-reference clearing moved into `LibraryWorkflowService`
+  - Added unit tests for Library workflow filtering, next wallpaper wrapping, and remove/settings side effects
+  - `MainWindow` now delegates more business logic to testable Data/App services
+  - Next Wallpaper selection now accepts a file-availability delegate, keeping tests deterministic while preserving the production `File.Exists` path
+- Added Playback workflow extraction:
+  - Last-wallpaper restore decisions moved into `WallpaperPlaybackWorkflowService`
+  - Per-monitor profile-to-wallpaper assignment decisions moved into `WallpaperPlaybackWorkflowService`
+  - Added unit tests for restorable wallpaper selection and skipping missing/unavailable monitor assignments
+- Added Performance workflow extraction:
+  - Performance preset, FPS, and pause-rule mutation logic moved into `PerformanceSettingsService`
+  - Added unit tests for Eco, Quality, custom FPS, and custom pause-rule behavior
+  - Monitor profile FPS updates are now handled through the service instead of UI code
+- Added Settings workflow extraction:
+  - General settings, wallpaper mode, default scale mode, last wallpaper, monitor profile sync, per-monitor wallpaper, per-monitor scale, and reset defaults moved into `SettingsWorkflowService`
+  - Added unit tests for startup/tray flags, default scale mode changes, wallpaper mode changes, monitor settings workflows, and reset defaults
+  - `MainWindow` no longer directly mutates persisted general settings, default scale mode, wallpaper mode, last wallpaper, or monitor profile lists
+- Added first visual fidelity pass:
+  - Replaced corrupted/mojibake icon text with UTF-8-safe XAML and Segoe MDL2 Assets glyphs
+  - Sidebar navigation, title-bar controls, Home actions, Library header controls, search field, and Settings engine actions now use icon elements instead of broken inline symbols
+  - Performance and Settings checkboxes now render as toggle-style controls closer to the mockup
+  - Wallpaper mode, scale mode, and performance preset cards now use shared icon/selection card composition
+  - Library cards now show selected state, kebab affordance, and icon+label actions
+  - Monitor cards now include numbered badges and a monitor-preview illustration closer to the Displays mockup
+- Added UI state and code-behind cleanup pass:
+  - App-level status banner added for success/error feedback
+  - Library view toggles now show disabled/tooltipped states until list view is implemented
+  - Displays page now has an empty state for missing monitor assignments
+  - Common icon and option-card composition moved into `UiElementFactory`
+- Added app usability pass:
+  - Add Wallpaper flow now yields between files and generates thumbnails asynchronously to reduce temporary Not Responding behavior
+  - Renderer windows are created hidden/offscreen, attached/repositioned, loaded, then shown to reduce flicker
+  - Library cards are larger, expose a compact actions menu instead of several buttons over the thumbnail, and show an Active status pill
+  - Library items can be renamed from the actions menu
+  - Home preview now updates from the active wallpaper thumbnail or image instead of always showing the static mockup
+- Added renderer correctness pass:
+  - WorkerW attachment is now verified through the renderer parent handle instead of treated as successful by default
+  - The renderer no longer silently falls back to `Progman`; it requires the WorkerW desktop layer behind icons so the wallpaper stays below desktop icons
+  - Renderer bounds are applied with physical monitor coordinates while WPF window dimensions are converted through the active device transform for DPI-aware sizing
+  - Renderer sessions expose attachment status, host handle, monitor bounds, and error details to the main app
+  - Home shows whether renderer sessions are attached below desktop icons across all active monitors
+  - Video render targets now receive monitor size and stretch-mode updates, including explicit aspect forcing for Stretch mode
+- Added Wallora brand asset integration:
+  - Processed supplied `img/app-icon.png` into square app icon PNG, 256px PNG, and multi-size `.ico`
+  - Processed supplied `img/primary-horizontal-logo.png` into a UI-ready horizontal transparent logo asset
+  - App and installer executables now use the Wallora `.ico`
+  - Main app sidebar/title bar and WPF installer title/welcome surfaces now use the supplied Wallora artwork
+- Added stronger video playback backend:
+  - WPF `MediaElement` was replaced with `LibVLCSharp.WPF`
+  - Native Windows LibVLC runtime is packaged via `VideoLAN.LibVLC.Windows`
+  - Video renderer supports loop, pause/resume, mute/unmute, and cleanup through LibVLC media player lifecycle
+- Added Win32 desktop embedding foundation:
+  - WorkerW discovery
+  - renderer window chrome stripping
+  - renderer attach entry point
+- Added WPF installer/uninstaller direction for closer mockup fidelity:
+  - New `LiveWallpaperStudio.Installer` WPF project added to the solution
+  - Custom frameless setup window is the active installer path
+  - Install flow includes branded welcome/options, custom install path field, custom checkboxes, gradient action buttons, progress view, and step indicators
+  - Uninstall flow includes custom remove screen and removed confirmation screen
+  - Placeholder/vector illustration panels were removed so the installer no longer presents unfinished mock artwork
+  - Wallora app icon and horizontal logo are used in the WPF setup/uninstall UI
+  - Installer copies the published app payload, creates desktop/startup entries, and registers an HKCU uninstall entry
+  - Uninstaller removes app files, shortcuts, startup entry, uninstall registry entry, and optionally app data
+  - `build/package.ps1` now publishes the WPF installer to `build/wpf-installer` and copies the app payload into `build/wpf-installer/payload`
+- Added packaging helper:
+  - `build/package.ps1` runs build, optional tests, app publish, WPF installer publish, and payload copy
+  - Legacy non-WPF installer tooling has been removed from the active package flow to avoid confusion
+  - Full package flow currently passes: build, tests, app publish, WPF installer publish, and payload copy
+- Added unit tests for settings defaults and wallpaper type detection.
+
+## Next Milestone
+
+The next implementation pass should harden per-monitor UX and playback:
+
+- Validate LibVLC playback behavior across more codecs and multi-monitor scenarios
+- Run live desktop QA on physical multi-monitor/DPI setups to confirm WorkerW attachment and below-icon placement on the target Windows builds
+- Continue visual QA against screenshots for exact spacing, typography, and card proportions
+- Continue visual QA on the WPF installer/uninstaller against the install/uninstall mockup and add final bitmap artwork only when production-ready assets are available
+- Extract remaining `MainWindow` UI-building logic into view models/services, with the next obvious target being visual card/view-model composition
+
+## Design Conformance Notes
+
+The implementation follows the documented design direction: dark custom WPF shell, left sidebar navigation, Home/Library/Displays/Performance/Settings pages, card-based wallpaper library, monitor controls, tray actions, and blue/purple accent styling.
+
+It is closer to the mockups after the first visual pass and installer pass, but still not pixel-perfect yet. The current code is a functional MVP shell that matches the product structure and workflow from the mockups, while some visual details remain to be refined: exact thumbnail artwork, exact spacing/typography after screenshot QA, one final interactive installer screenshot pass, and stronger video playback polish.
